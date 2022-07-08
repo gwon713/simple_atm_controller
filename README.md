@@ -47,3 +47,12 @@ card3 = Card("3333-3333-3333-3333", "1111")
 - See Balance
 - Deposit
 - Withdraw
+
+#### Test Error Case
+
+- Enter Invalid Card Number
+- Enter Invalid PIN Number
+- Enter Not 4 digit pin number (3 or 5 digit)
+- Enter Suspended Card Number After Validation PIN fails 3 times
+- Enter Card Without Accounts (3333-3333-3333-3333)
+- Enter Withdraw Amount of more than the Balance
