@@ -7,7 +7,11 @@ class Card:
     self.accounts = []
     
   def __str__(self):
-    return f"Card number: {self.number}, pin: {self.pin}, pinErrorCnt: {self.pinErrorCnt}, stop: {self.stop}"
+    string = f"Card number: {self.number}, pin: {self.pin}, pinErrorCnt: {self.pinErrorCnt}, stop: {self.stop}"
+    string += f"\n{self.number} Account List"
+    for account in self.findAllAccount():
+       string += f"\n{account}"
+    return string
   
   def findAccount(self, accountNum):
     return filter(lambda account: account.number == accountNum, self.accounts)

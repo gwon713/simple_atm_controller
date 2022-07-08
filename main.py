@@ -10,8 +10,8 @@ account4 = Account("444-4444444-444")
 
 card1 = Card("1111-1111-1111-1111", "1234")
 
-card1.addAccount(account1)
-card1.addAccount(account2)
+# card1.addAccount(account1)
+# card1.addAccount(account2)
 
 card2 = Card("2222-2222-2222-2222", "1234")
 
@@ -26,9 +26,6 @@ cards.addCard(card2)
 
 for card in cards.findAll():
   print(str(card))
-  print(f"{card.number} Account List")
-  for account in card.findAllAccount():
-    print(str(account))
 
 def insertCard():
   print("Welcome ATM")
@@ -50,18 +47,28 @@ def insertCard():
   
 def validateCardPIN(targerCard):
   pinNum=str(input("Enter your 4 digit PIN Number : "))
-  
-  if targerCard.validatePIN(pinNum):
+
+  if targerCard.validatePIN(pinNum) == True:
     print("인증되었습니다")
-    return True
+    return selectAccount(targerCard)
   else:
-    if(targerCard.pinErrorCnt > 2):
+    if targerCard.pinErrorCnt > 2:
       targerCard.stopCard()
       print(f"{targerCard.number} 카드 정지")
-      return False    
+      return insertCard()
     validateCardPIN(targerCard)
 
+def selectAccount(targerCard):
+  print(f"Card {targerCard.number} Account List")
+  accounts = targerCard.findAllAccount()
+  if not len(list(accounts)) > 0:
+    print("거래를 진행할 계좌가 없습니다. 메인화면으로 돌아갑니다")
+    insertCard()
+  for idx, account in enumerate(accounts):
+    print(f"{idx}. {account}")
+  accountNum=int(input("Select your Account: "))
 
-while True:
-  card = insertCard()
-  continue
+def ATM():
+  insertCard()
+  
+ATM()
