@@ -28,22 +28,18 @@ for card in cards.findAll():
   print(str(card))
 
 def insertCard():
-  print("Welcome ATM")
   cardNum=str(input("카드를 넣어주세요: "))
 
   card = list(cards.findOne(cardNum))
 
   if not len(card):
     print("등록되지 않은 카드입니다")
-    insertCard()
+    return insertCard()
   else:
     if card[0].stop == True:
       print(f"{card[0].number} 카드는 정지된 상태입니다")
-      insertCard()
-    if validateCardPIN(card[0]) == True:
-      return card[0]
-    else:
-      insertCard()
+      return insertCard()
+    return validateCardPIN(card[0])
   
 def validateCardPIN(targerCard):
   pinNum=str(input("Enter your 4 digit PIN Number : "))
@@ -56,19 +52,21 @@ def validateCardPIN(targerCard):
       targerCard.stopCard()
       print(f"{targerCard.number} 카드 정지")
       return insertCard()
-    validateCardPIN(targerCard)
+    return validateCardPIN(targerCard)
 
 def selectAccount(targerCard):
   print(f"Card {targerCard.number} Account List")
   accounts = targerCard.findAllAccount()
   if not len(list(accounts)) > 0:
     print("거래를 진행할 계좌가 없습니다. 메인화면으로 돌아갑니다")
-    insertCard()
+    return ATM()
   for idx, account in enumerate(accounts):
     print(f"{idx}. {account}")
   accountNum=int(input("Select your Account: "))
+  return ATM()
 
 def ATM():
+  print("Welcome ATM")
   insertCard()
   
 ATM()
