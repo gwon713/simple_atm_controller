@@ -3,6 +3,9 @@ class Account:
     self.number = number
     self.money = 0
 
+  def __str__(self):
+    return f"Account number : {self.number}, money : {self.money}"
+  
   def deposit(self, money):
     self.money += money
     
