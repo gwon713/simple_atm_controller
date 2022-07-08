@@ -1,16 +1,20 @@
 class Account:
-  def __init__(self, number):
+  def __init__(self, number, balance=0, cardNum=None):
+    self.cardNum = cardNum
     self.number = number
-    self.money = 0
+    self.balance = balance
 
   def __str__(self):
-    return f"Account : {self.number}"
+    return f"Account : {self.number}, balance: ${self.balance}, cardNum: {self.cardNum}"
   
-  def deposit(self, money):
-    self.money += money
+  def deposit(self, amount):
+    self.balance += amount
+    return True
     
-  def withdraw(self, money):
-    if self.money - money < 0:
-      raise Exception('잔액이 부족합니다')
+  def withdraw(self, amount):
+    if self.balance - amount < 0:
+      print(f"!!!Lack of balance // Balance: ${self.balance}!!!")
+      return False
     else:
-      self.money -= money
+      self.balance -= amount
+      return True

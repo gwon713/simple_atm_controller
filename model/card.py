@@ -3,14 +3,17 @@ class Card:
     self.number = number
     self.pin = pin
     self.pinErrorCnt = 0
-    self.stop = False
+    self.stopped = False
     self.accounts = []
     
   def __str__(self):
-    string = f"Card number: {self.number}, pin: {self.pin}, pinErrorCnt: {self.pinErrorCnt}, stop: {self.stop}"
-    string += f"\n{self.number} Account List"
-    for account in self.findAllAccount():
-       string += f"\n{account}"
+    string = f"Card number: {self.number}, pin: {self.pin}, stopped: {self.stopped}"
+    string += f"\n ======== Account List ========"
+    for idx, account in enumerate(self.findAllAccount()):
+       string += f"\n{idx+1}. {account}"
+    if len(self.findAllAccount()) < 1:
+      string += "\nAccounts Not Found"
+    string += f"\n =============================="
     return string
   
   def findAccount(self, accountNum):
@@ -31,9 +34,8 @@ class Card:
       return True
     else:
       self.pinErrorCnt += 1
-      print(f"비밀번호가 틀렸습니다. // 비밀번호 {self.pinErrorCnt}회 오류")      
-      print(f"pinErrorCnt: {self.pinErrorCnt}")
+      print(f"Entered PIN Number is incorrect // Number of invalid PIN {self.pinErrorCnt} Times")
       return False
 
   def stopCard(self):
-    self.stop = True
+    self.stopped = True

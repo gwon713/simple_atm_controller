@@ -1,72 +1,164 @@
 from model.account import *
-from model.cards import *
+from model.accounts import *
 from model.card import *
+from model.cards import *
 
+global cards, accounts 
+cards = Cards()
+accounts = Accounts()
 # Card Register
-account1 = Account("111-1111111-111")
-account2 = Account("222-2222222-222")
-account3 = Account("333-3333333-333")
-account4 = Account("444-4444444-444")
-
 card1 = Card("1111-1111-1111-1111", "1234")
 
-# card1.addAccount(account1)
-# card1.addAccount(account2)
+account1 = Account("111-1111111-111", 10000, card1.number)
+card1.addAccount(account1)
 
-card2 = Card("2222-2222-2222-2222", "1234")
+card2 = Card("2222-2222-2222-2222", "5678")
 
+account2 = Account("222-2222222-222", 0, card2.number)
+card2.addAccount(account2)
+account3 = Account("333-3333333-333", 200, card2.number)
 card2.addAccount(account3)
-card2.addAccount(account4)
 
-global cards 
-cards = Cards()
+card3 = Card("3333-3333-3333-3333", "1111")
 
+account4 = Account("444-4444444-444", 1)
+account5 = Account("555-5555555-555", 500)
+
+# Add Card List
 cards.addCard(card1)
 cards.addCard(card2)
+cards.addCard(card3)
 
-for card in cards.findAll():
-  print(str(card))
+# Add Account List
+accounts.addAccount(account1)
+accounts.addAccount(account2)
+accounts.addAccount(account3)
+accounts.addAccount(account4)
+accounts.addAccount(account5)
+
+def printAllInfo():
+  for card in cards.findAll():
+    print(" ======== Card Info ========")
+    print(str(card))
+
+  print(" ======== Account Info ========")
+  for account in accounts.findAll():
+    print(str(account))
 
 def insertCard():
-  cardNum=str(input("카드를 넣어주세요: "))
+  print("------------------------------")
+  cardNum=str(input("Please insert your card: "))
 
   card = list(cards.findOne(cardNum))
 
   if not len(card):
-    print("등록되지 않은 카드입니다")
+    print("!!!This card is not registered!!!")
     return insertCard()
   else:
-    if card[0].stop == True:
-      print(f"{card[0].number} 카드는 정지된 상태입니다")
+    if card[0].stopped == True:
+      print(f"!!!Card {card[0].number} is suspended!!!")
       return insertCard()
     return validateCardPIN(card[0])
   
 def validateCardPIN(targerCard):
+  print("------------------------------")
   pinNum=str(input("Enter your 4 digit PIN Number : "))
 
   if targerCard.validatePIN(pinNum) == True:
-    print("인증되었습니다")
+    print("Validation successful")
     return selectAccount(targerCard)
   else:
     if targerCard.pinErrorCnt > 2:
       targerCard.stopCard()
-      print(f"{targerCard.number} 카드 정지")
+      print(f"!!!Suspend the card {targerCard.number}!!!")
       return insertCard()
     return validateCardPIN(targerCard)
 
-def selectAccount(targerCard):
+def printCardAccounts(targerCard, cardAccounts):
   print(f"Card {targerCard.number} Account List")
+  for idx, account in enumerate(cardAccounts):
+    print(f"{idx+1}. Account: {account.number}")
+
+def selectAccount(targerCard):
+  print("------------------------------")
   accounts = targerCard.findAllAccount()
   if not len(list(accounts)) > 0:
-    print("거래를 진행할 계좌가 없습니다. 메인화면으로 돌아갑니다")
+    print("!!!There are no accounts to trade. Return to the main screen!!!")
     return ATM()
-  for idx, account in enumerate(accounts):
-    print(f"{idx}. {account}")
+
+  printCardAccounts(targerCard, accounts)
+
   accountNum=int(input("Select your Account: "))
-  return ATM()
+
+  if 0 < accountNum <= len(list(accounts)) :
+    account = list(accounts)[accountNum-1]
+    print(account)
+    return selectService(targerCard, account)
+  else: 
+    print("!!!Wrong Select Account!!!")
+    return selectAccount(targerCard)
+
+def printServiceList():
+  print("Service List")
+  print("0. Return to the Main Screen")
+  print("1. See Balance")
+  print("2. Deposit")
+  print("3. Withdraw")
+  print("4. Return to the Select Account")
+
+def selectService(targerCard, targerAccount):
+  print("------------------------------")
+  printServiceList()
+
+  serviceNum=int(input("Select your Account: "))
+
+  match serviceNum:
+    case 0:
+      return ATM()
+    case 1:
+      return seeBalanceAccount(targerCard, targerAccount)
+    case 2:
+      return depositAccount(targerCard, targerAccount)
+    case 3:
+      return withdrawAccount(targerCard, targerAccount)
+    case 4:
+      return selectAccount(targerCard)
+    case _:
+      print("!!!Wrong Select Service!!!")
+      return selectService(targerCard, targerAccount)
+
+def seeBalanceAccount(targerCard, targerAccount):
+  print("------------------------------")
+  print(f"Balance: ${targerAccount.balance}")
+  return selectService(targerCard, targerAccount)
+
+def depositAccount(targerCard, targerAccount):
+  print("------------------------------")
+  depositAmount=int(float(input("Enter the deposit amount: ")))
+  if targerAccount.deposit(depositAmount) == True:
+    print("Deposit successful")
+    print(f"Balance: ${targerAccount.balance}")
+    return selectService(targerCard, targerAccount)
+  else:
+    print("!!!Deposit failed!!!")
+    return depositAccount(targerCard, targerAccount)
+
+def withdrawAccount(targerCard, targerAccount):
+  print("------------------------------")
+  withdrawAmount=int(float(input("Enter the withdraw amount: ")))
+  if targerAccount.withdraw(withdrawAmount) == True:
+    print("Withdraw successful")
+    print(f"Balance: ${targerAccount.balance}")
+    return selectService(targerCard, targerAccount)
+  else:
+    print("!!!Withdraw failed!!!")
+    return depositAccount(targerCard, targerAccount)
 
 def ATM():
-  print("Welcome ATM")
+  print("==============================")
+  print("======Welcome Simple ATM======")
+  print("==============================")
   insertCard()
-  
+
+printAllInfo()
 ATM()
