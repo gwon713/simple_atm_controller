@@ -36,6 +36,17 @@ accounts.addAccount(account3)
 accounts.addAccount(account4)
 accounts.addAccount(account5)
 
+def printDividingLine():
+  print("------------------------------")
+
+def printServiceList():
+  print("Service List")
+  print("0. Return to the Main Screen")
+  print("1. See Balance")
+  print("2. Deposit")
+  print("3. Withdraw")
+  print("4. Return to the Select Account")
+
 def printAllInfo():
   for card in cards.findAll():
     print(" ======== Card Info ========")
@@ -45,9 +56,14 @@ def printAllInfo():
   for account in accounts.findAll():
     print(str(account))
 
+def printCardAccounts(targerCard, cardAccounts):
+  print(f"Card {targerCard.number} Account List")
+  for idx, account in enumerate(cardAccounts):
+    print(f"{idx+1}. Account: {account.number}")
+
 def insertCard():
-  print("------------------------------")
-  cardNum=str(input("Please insert your card: "))
+  printDividingLine()
+  cardNum=str(input("Please insert your card: ")).strip()
 
   card = list(cards.findOne(cardNum))
 
@@ -61,8 +77,12 @@ def insertCard():
     return validateCardPIN(card[0])
   
 def validateCardPIN(targerCard):
-  print("------------------------------")
-  pinNum=str(input("Enter your 4 digit PIN Number : "))
+  printDividingLine()
+  pinNum=str(input("Enter your 4 digit PIN Number : ")).strip()
+
+  if not len(pinNum) == 4:
+    print("!!!Please enter only 4 digits!!!")
+    return validateCardPIN(targerCard)
 
   if targerCard.validatePIN(pinNum) == True:
     print("Validation successful")
@@ -74,13 +94,8 @@ def validateCardPIN(targerCard):
       return insertCard()
     return validateCardPIN(targerCard)
 
-def printCardAccounts(targerCard, cardAccounts):
-  print(f"Card {targerCard.number} Account List")
-  for idx, account in enumerate(cardAccounts):
-    print(f"{idx+1}. Account: {account.number}")
-
 def selectAccount(targerCard):
-  print("------------------------------")
+  printDividingLine()
   accounts = targerCard.findAllAccount()
   if not len(list(accounts)) > 0:
     print("!!!There are no accounts to trade. Return to the main screen!!!")
@@ -98,16 +113,8 @@ def selectAccount(targerCard):
     print("!!!Wrong Select Account!!!")
     return selectAccount(targerCard)
 
-def printServiceList():
-  print("Service List")
-  print("0. Return to the Main Screen")
-  print("1. See Balance")
-  print("2. Deposit")
-  print("3. Withdraw")
-  print("4. Return to the Select Account")
-
 def selectService(targerCard, targerAccount):
-  print("------------------------------")
+  printDividingLine()
   printServiceList()
 
   serviceNum=int(input("Select your Account: "))
@@ -128,31 +135,31 @@ def selectService(targerCard, targerAccount):
       return selectService(targerCard, targerAccount)
 
 def seeBalanceAccount(targerCard, targerAccount):
-  print("------------------------------")
-  print(f"Balance: ${targerAccount.balance}")
+  printDividingLine()
+  targerAccount.seeBalance()
   return selectService(targerCard, targerAccount)
 
 def depositAccount(targerCard, targerAccount):
-  print("------------------------------")
-  depositAmount=int(float(input("Enter the deposit amount: ")))
+  printDividingLine()
+  depositAmount=int(float(input("Enter the deposit amount: $")))
   if targerAccount.deposit(depositAmount) == True:
     print("Deposit successful")
-    print(f"Balance: ${targerAccount.balance}")
+    targerAccount.seeBalance()
     return selectService(targerCard, targerAccount)
   else:
     print("!!!Deposit failed!!!")
     return depositAccount(targerCard, targerAccount)
 
 def withdrawAccount(targerCard, targerAccount):
-  print("------------------------------")
-  withdrawAmount=int(float(input("Enter the withdraw amount: ")))
+  printDividingLine()
+  withdrawAmount=int(float(input("Enter the withdraw amount: $")))
   if targerAccount.withdraw(withdrawAmount) == True:
     print("Withdraw successful")
-    print(f"Balance: ${targerAccount.balance}")
+    targerAccount.seeBalance()
     return selectService(targerCard, targerAccount)
   else:
     print("!!!Withdraw failed!!!")
-    return depositAccount(targerCard, targerAccount)
+    return withdrawAccount(targerCard, targerAccount)
 
 def ATM():
   print("==============================")

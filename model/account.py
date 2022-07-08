@@ -7,6 +7,9 @@ class Account:
   def __str__(self):
     return f"Account : {self.number}, balance: ${self.balance}, cardNum: {self.cardNum}"
   
+  def seeBalance(self):
+    print(f"Balance: ${self.balance}")
+  
   def deposit(self, amount):
     self.balance += amount
     return True
